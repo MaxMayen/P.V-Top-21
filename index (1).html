@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes">
+<title>Caja del salón</title>
+<style>
+:root{--bg:#f5f2f8;--cd:#fff;--tx:#1f1a24;--mu:#766d80;--ac:#5b2a86;--on:#fff;--bd:#e3dcea;--ok:#17724c;--okb:#dff3e8;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#150f1b;--cd:#211a29;--tx:#f1ecf5;--mu:#a699b3;--ac:#b98cf0;--on:#190f24;--bd:#372c44;--ok:#6fdca6;--okb:#173a2a}}
+:root[data-theme="dark"]{--bg:#150f1b;--cd:#211a29;--tx:#f1ecf5;--mu:#a699b3;--ac:#b98cf0;--on:#190f24;--bd:#372c44;--ok:#6fdca6;--okb:#173a2a}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--tx);font:16px/1.35 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+body{padding:12px 12px 90px;max-width:560px;margin:0 auto}
+h1{font-size:20px;margin:0}h2{font-size:17px;margin:0 0 8px}small,.mu{color:var(--mu)}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+button{font:inherit;color:inherit;border:1px solid var(--bd);background:var(--cd);border-radius:12px;padding:10px 12px;min-height:44px}
+button:focus-visible,input:focus-visible{outline:3px solid var(--ac);outline-offset:1px}
+.on,.b{background:var(--ac);color:var(--on);border-color:var(--ac);font-weight:600}
+.b{width:100%;margin-top:10px}.b:disabled{opacity:.4}
+.in{width:100%;font:inherit;color:inherit;background:var(--cd);border:1px solid var(--bd);border-radius:12px;padding:10px;min-height:44px}
+.chips{display:flex;gap:8px;overflow-x:auto;padding-bottom:6px}.chips button{white-space:nowrap}
+.seg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:8px 0}
+.grid button{text-align:left;display:flex;flex-direction:column;gap:2px}.grid small{font-size:14px}
+.card{background:var(--cd);border:1px solid var(--bd);border-radius:14px;padding:12px;margin:10px 0}
+.row{display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:1px solid var(--bd)}.row:last-child{border:0}
+.row span{flex:1}.x{padding:4px 10px;min-height:36px}
+.tot{display:flex;justify-content:space-between;font-size:22px;font-weight:700;margin-top:8px}
+nav{position:fixed;left:0;right:0;bottom:0;display:flex;gap:6px;padding:8px 12px calc(8px + env(safe-area-inset-bottom,0px));background:var(--cd);border-top:1px solid var(--bd)}
+nav button{flex:1}
+.ov{position:fixed;inset:0;background:rgba(10,5,15,.6);display:flex;align-items:flex-end;justify-content:center;z-index:5}
+.md{background:var(--bg);width:100%;max-width:560px;border-radius:20px 20px 0 0;padding:16px 16px calc(16px + env(safe-area-inset-bottom,0px))}
+.big{font-size:40px;font-weight:800;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.chg{background:var(--okb);color:var(--ok);border-radius:14px;padding:10px 14px;margin-top:10px}
+.q{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.lock{text-align:center;padding-top:15vh}.lock input{text-align:center;font-size:28px;letter-spacing:.4em;max-width:240px}
+.f{display:grid;grid-template-columns:1fr 80px 80px 40px;gap:6px;margin-bottom:6px}.f.s{grid-template-columns:1fr 90px 40px}.f.s2{grid-template-columns:1fr 80px 40px}
+.f .in{padding:8px}details{margin:10px 0}summary{font-weight:700;padding:10px 0}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}td,th{text-align:right;padding:6px 4px;border-bottom:1px solid var(--bd)}td:first-child,th:first-child{text-align:left}th{font-weight:500;color:var(--mu);font-size:13px}
+</style></head><body><div id="app"></div>
+<script src="xlsx.full.min.js"></script>
+<script>
+const P=(s,e)=>s.split(';').map(x=>{const a=x.split('|'),p=+a[1];return e?{n:a[0],p,c:a[2]!==undefined?+a[2]:Math.round(p*10)/100}:{n:a[0],p}});
+const def=()=>({pin:'1234',staff:['Lorena','Chelo','Javier','Estrella'].map(n=>({n,c:0})),
+svc:P('CD|200;CC|170;Alaciado|0;Curly|0;Peinado|0;Apt|350;Retoque|0;Tinte|0;Rayos|0;Decoloración|0;Balayage|0;Marroquín|0;Keratina|0;Bótox|0;Tratamiento|0;Esmalte|100;Manicure|180;Pedicure|220;Retiro de Gelish|80;Retiro de Acri|150;Gelish|200;Ap. uñas tips|250;Ap. uñas escult|350;Decoración|0;Ceja|100;Rostro|400;Axilas|150;Bikini|350;Media pierna|250;Pierna completa|350;Planchado ceja|250;Rizado pestañas|350;Pestañas de tira|150;Pestañas grupo|300;Maquillaje|600'),
+prod:P('Vitamina|350;Mascarilla|350;Mascarilla Argán|290;Keratina Kacao|530;Keratina + Soya|530;Keratina Finish|530;Seda|530;Finalizador|530;Shampoo|350;Cera|250;Gel|250;Argán|210;Gotas|290;Crema|330;Uniq|430;Curls|470;Ampolleta Rosa|150|40;Ampolleta Azul|150|40;Ampolleta de Keratina|220|60;Ampolleta de Goji|220|60',1),sales:[]});
+let D;try{D=JSON.parse(localStorage.getItem('caja1'))}catch(e){}D=D||def();D.exp=D.exp||[];try{navigator.storage&&navigator.storage.persist&&navigator.storage.persist()}catch(e){}
+const sv=()=>{try{localStorage.setItem('caja1',JSON.stringify(D))}catch(e){}};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const m=n=>'$'+(+n).toLocaleString('es-MX',{maximumFractionDigits:2});
+const today=()=>new Date().toLocaleDateString('sv');
+let v='lock',tab='s',q='',sel=0,T=[],cd=today(),pay=null;const O={};
+const $=id=>document.getElementById(id),tot=()=>T.reduce((a,x)=>a+x.p,0);
+function r(){let h='';if(v=='lock')h=lock();else{if(sel>=D.staff.length)sel=Math.max(0,D.staff.length-1);h=`<div class=top><h1>${{pos:'Cobrar',cut:'Corte del día',adm:'Administración'}[v]}</h1><button onclick="v='lock';r()" aria-label="Bloquear">🔒</button></div>`+(v=='pos'?pos():v=='cut'?cut():adm())+`<nav>${[['pos','Cobrar'],['cut','Corte'],['adm','Admin']].map(a=>`<button class="${v==a[0]?'on':''}" onclick="v='${a[0]}';r()">${a[1]}</button>`).join('')}</nav>`+(pay?modal():'')}$('app').innerHTML=h}
+function lock(){return`<div class=lock><h1>Caja del salón</h1><p class=mu>Escribe tu PIN</p><input id=pin class=in type=password inputmode=numeric autocomplete=off onkeydown="if(event.key=='Enter')unlock()"><button class=b style="max-width:240px" onclick="unlock()">Entrar</button><p id=err style="color:#c0392b"></p></div>`}
+function unlock(){if($('pin').value===D.pin){v='pos';r()}else{$('err').textContent='PIN incorrecto. Inténtalo de nuevo.';$('pin').value=''}}
+function gh(){const L=(tab=='s'?D.svc:D.prod).map((x,i)=>[x,i]).filter(o=>o[0].n.toLowerCase().includes(q.toLowerCase()));return L.length?L.map(o=>`<button onclick="add('${tab}',${o[1]})">${esc(o[0].n)}<small>${o[0].p?m(o[0].p):'Precio variable'}</small></button>`).join(''):'<p class=mu>Sin resultados.</p>'}
+function g(){$('grid').innerHTML=gh()}
+function pos(){const t=tot();return`<div class=chips>${D.staff.map((s,i)=>`<button class="${i==sel?'on':''}" onclick="sel=${i};r()">${esc(s.n)}</button>`).join('')}</div>
+<div class=seg><button class="${tab=='s'?'on':''}" onclick="tab='s';r()">Servicios</button><button class="${tab=='p'?'on':''}" onclick="tab='p';r()">Productos</button></div>
+<input class=in placeholder="Buscar" value="${esc(q)}" oninput="q=this.value;g()"><div class=grid id=grid>${gh()}</div>
+<div class=card><h2>Cuenta</h2>${T.length?T.map((x,i)=>`<div class=row><span>${esc(x.n)}<br><small>${esc(x.st)}</small></span><b>${m(x.p)}</b><button class=x onclick="T.splice(${i},1);r()" aria-label="Quitar">✕</button></div>`).join(''):'<p class=mu>Toca un servicio o producto para agregarlo.</p>'}
+<div class=tot><span>Total</span><span>${m(t)}</span></div><button class=b ${T.length?'':'disabled'} onclick="pay={m:'e',rec:0};r()">Cobrar ${T.length?m(t):''}</button></div>`}
+function add(k,i){const x=(k=='s'?D.svc:D.prod)[i];if(!D.staff.length){alert('Agrega personal en Admin.');return}let p=x.p;if(!p){p=parseFloat(prompt('Precio de '+x.n));if(isNaN(p)||p<0)return}T.push({k,n:x.n,p,c:k=='p'?x.c:0,st:D.staff[sel].n});r()}
+function modal(){const t=tot(),e=pay.m=='e';return`<div class=ov><div class=md><div class=mu>Total a cobrar</div><div class=big>${m(t)}</div>
+<div class=seg><button class="${e?'on':''}" onclick="pay.m='e';r()">Efectivo</button><button class="${e?'':'on'}" onclick="pay.m='t';r()">Tarjeta</button></div>
+${e?`<label class=mu for=rc>Recibido</label><input id=rc class=in inputmode=decimal value="${pay.rec||''}" oninput="pay.rec=parseFloat(this.value)||0;ch()"><div class=q>${[t,100,200,500,1000].map((n,i)=>`<button onclick="pay.rec=${n};r()">${i?m(n):'Exacto'}</button>`).join('')}</div><div class=chg>Cambio <div class=big id=chg>${chs(t)}</div></div>`:''}
+<button class=b id=ok onclick="done()" ${e&&pay.rec<t?'disabled':''}>Confirmar cobro</button><button class=in style="margin-top:8px" onclick="pay=null;r()">Cancelar</button></div></div>`}
+function chs(t){const c=pay.rec-t;return c>=0?m(c):'Faltan '+m(-c)}
+function ch(){const t=tot();$('chg').textContent=chs(t);$('ok').disabled=pay.rec<t}
+function done(){const t=tot(),e=pay.m=='e';D.sales.push({d:today(),t:Date.now(),items:T,total:t,m:pay.m,rec:e?pay.rec:t,ch:e?pay.rec-t:0});T=[];pay=null;sv();r()}
+function cut(){const S=D.sales.filter(s=>s.d==cd),by={},X=D.exp.filter(e=>e.d==cd),gx=X.reduce((a,e)=>a+e.a,0);let ef=0,tj=0;S.forEach(s=>{s.m=='e'?ef+=s.total:tj+=s.total;s.items.forEach(x=>{const a=by[x.st]||(by[x.st]={s:0,p:0,c:0});if(x.k=='s'){a.s+=x.p;a.c+=x.p*((D.staff.find(z=>z.n==x.st)||{}).c||0)/100}else{a.p+=x.p;a.c+=x.c}})});
+const names=[...D.staff.map(s=>s.n),...Object.keys(by).filter(n=>!D.staff.some(s=>s.n==n))];
+return`<input class=in type=date value="${cd}" onchange="cd=this.value||today();r()">
+<div class=card><div class=row><span>Ventas (${S.length})</span><b>${m(ef+tj)}</b></div><div class=row><span>Efectivo</span><b>${m(ef)}</b></div><div class=row><span>Tarjeta</span><b>${m(tj)}</b></div><div class=row><span>Gastos</span><b>${m(gx)}</b></div><div class=row><span>Efectivo en caja</span><b>${m(ef-gx)}</b></div></div>
+<div class=card><h2>Por estilista</h2><div style="overflow-x:auto"><table><tr><th>Nombre<th>Servicios<th>Productos<th>Comisión</tr>${names.map(n=>{const a=by[n]||{s:0,p:0,c:0};return`<tr><td>${esc(n)}<td>${m(a.s)}<td>${m(a.p)}<td><b>${m(a.c)}</b></tr>`}).join('')}</table></div></div>
+<div class=card><h2>Gastos</h2>${X.map(e=>`<div class=row><span>${esc(e.n)}</span><b>${m(e.a)}</b><button class=x onclick="delx(${e.t})" aria-label="Borrar gasto">✕</button></div>`).join('')||'<p class=mu>Sin gastos en esta fecha.</p>'}<div style="display:grid;grid-template-columns:1fr 110px;gap:6px;margin:8px 0"><input id=gn class=in placeholder="Concepto"><input id=ga class=in inputmode=decimal placeholder="Monto"></div><button class=in onclick="addx()">Agregar gasto</button></div><button class=b onclick="exp()">Exportar a Excel</button>
+${S.length?`<button class=in style="margin-top:10px" onclick="if(confirm('¿Deshacer la última venta de este día?')){const i=D.sales.map(s=>s.d).lastIndexOf(cd);D.sales.splice(i,1);sv();r()}">Deshacer última venta</button>`:'<p class=mu>No hay ventas en esta fecha.</p>'}`}
+function addx(){const n=$('gn').value.trim(),a=parseFloat($('ga').value);if(!n||isNaN(a)||a<=0){alert('Escribe el concepto y un monto mayor a 0.');return}D.exp.push({d:cd,t:Date.now(),n,a});sv();r()}
+function delx(t){D.exp=D.exp.filter(e=>e.t!==t);sv();r()}
+async function exp(){if(!window.XLSX){alert('Para exportar necesitas conexión a internet la primera vez.');return}
+const V=[['Fecha','Hora','Estilista','Tipo','Concepto','Monto','Pago']];D.sales.forEach(s=>s.items.forEach(x=>V.push([s.d,new Date(s.t).toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'}),x.st,x.k=='s'?'Servicio':'Producto',x.n,x.p,s.m=='e'?'Efectivo':'Tarjeta'])));
+const G=[['Fecha','Concepto','Monto'],...D.exp.map(e=>[e.d,e.n,e.a])],SS=D.sales.filter(s=>s.d==cd),by={};let ef=0,tj=0;
+SS.forEach(s=>{s.m=='e'?ef+=s.total:tj+=s.total;s.items.forEach(x=>{const a=by[x.st]||(by[x.st]=[0,0,0]);if(x.k=='s'){a[0]+=x.p;a[2]+=x.p*((D.staff.find(z=>z.n==x.st)||{}).c||0)/100}else{a[1]+=x.p;a[2]+=x.c}})});
+const gx=D.exp.filter(e=>e.d==cd).reduce((a,e)=>a+e.a,0),C=[['Corte del día',cd],['Ventas',ef+tj],['Efectivo',ef],['Tarjeta',tj],['Gastos',gx],['Efectivo en caja',ef-gx],[],['Estilista','Servicios','Productos','Comisión'],...Object.keys(by).map(n=>[n,...by[n]])];
+const wb=XLSX.utils.book_new();[['Corte',C],['Ventas',V],['Gastos',G]].forEach(a=>XLSX.utils.book_append_sheet(wb,XLSX.utils.aoa_to_sheet(a[1]),a[0]));
+const buf=XLSX.write(wb,{type:'array',bookType:'xlsx'}),fn='caja-'+cd+'.xlsx';
+try{const K=window.Capacitor;if(K&&K.isNativePlatform&&K.isNativePlatform()){const w=await K.Plugins.Filesystem.writeFile({path:fn,data:XLSX.write(wb,{type:'base64',bookType:'xlsx'}),directory:'CACHE'});await K.Plugins.Share.share({title:fn,url:w.uri});return}const dl=window.claude&&await claude.use('downloads');if(dl)await dl.save({filename:fn,data:buf});else{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([buf]));a.download=fn;a.click()}}catch(e){if(!e||(e.code!=='declined'&&!/cancel/i.test(e.message||'')))alert('No se pudo guardar el archivo.')}}
+const ed=(a,i,f,x)=>{D[a][i][f]=f=='n'?x:(parseFloat(x)||0);sv()};
+const del=(a,i)=>{if(confirm('¿Borrar?')){D[a].splice(i,1);sv();r()}};
+const ad=a=>{D[a].push(a=='staff'?{n:'Nuevo',c:0}:a=='svc'?{n:'Nuevo servicio',p:0}:{n:'Nuevo producto',p:0,c:0});O[a]=1;sv();r()};
+const ni=(a,i,f,x,w)=>`<input class=in ${w?'inputmode=decimal':''} value="${esc(x)}" onchange="ed('${a}',${i},'${f}',this.value)">`;
+const dx=(a,i)=>`<button class=x onclick="del('${a}',${i})" aria-label="Borrar">✕</button>`;
+const dt=(k,t,b)=>`<details ${O[k]?'open':''} ontoggle="O['${k}']=this.open?1:0"><summary>${t}</summary>${b}</details>`;
+function adm(){return`<div class=card>`+dt('pin','PIN de acceso',`<input id=np class=in inputmode=numeric placeholder="Nuevo PIN (mínimo 4 dígitos)"><button class=b onclick="const p=$('np').value;if(/^\\d{4,8}$/.test(p)){D.pin=p;sv();$('np').value='';alert('PIN actualizado')}else alert('Usa de 4 a 8 números.')">Guardar PIN</button>`)+
+dt('staff','Personal y comisión por servicios',`<p class=mu>Comisión: % sobre los servicios de cada persona.</p>`+D.staff.map((s,i)=>`<div class="f s"><span style="display:none"></span>${ni('staff',i,'n',s.n)}${ni('staff',i,'c',s.c,1)}${dx('staff',i)}</div>`).join('')+`<button class=in onclick="ad('staff')">Agregar persona</button>`)+
+dt('prod','Productos y comisión',`<p class=mu>Nombre, precio y comisión en pesos por pieza (ampolletas incluidas).</p>`+D.prod.map((s,i)=>`<div class=f>${ni('prod',i,'n',s.n)}${ni('prod',i,'p',s.p,1)}${ni('prod',i,'c',s.c,1)}${dx('prod',i)}</div>`).join('')+`<button class=in onclick="ad('prod')">Agregar producto</button>`)+
+dt('svc','Servicios y precios',`<p class=mu>Precio 0 = variable (se pide al cobrar).</p>`+D.svc.map((s,i)=>`<div class="f s2">${ni('svc',i,'n',s.n)}${ni('svc',i,'p',s.p,1)}${dx('svc',i)}</div>`).join('')+`<button class=in onclick="ad('svc')">Agregar servicio</button>`)+`</div>`}
+r();
+</script></body></html>
